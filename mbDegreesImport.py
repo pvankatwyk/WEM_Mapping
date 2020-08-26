@@ -1,4 +1,3 @@
-
 def mbDegreesImport(cDirection1, dDegrees, dMinutes, dSeconds, cDirection2, feet):
     # FXN: Several singular conversions of Degrees/Minutes/Seconds to Decimal Degrees with export
     # INPUTS: Legal description actionable item

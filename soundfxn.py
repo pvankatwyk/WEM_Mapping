@@ -1,4 +1,3 @@
-
 def sound(name):
     from playsound import playsound
     # FXN: Plays a sound
