@@ -36,12 +36,15 @@ import rpy2.robjects as ro
 # APP THEME
 sg.theme('Dark2')
 
-# Main Window
+# Establish the Main Window Layout
 layout_Main = [[sg.Image(r'\\WEM-MASTER\Sensitive Data\WEM Uintah\Maps\Code\WEM (2).png')],
                [sg.Text('What would you like to view?')],
                [sg.Button('Programs'), sg.Button('Files')]]
 
+# Activate the layout and make it a window, which is assigned to win_Main (to be activated later)
 win_Main = sg.Window("WEM Mapping Application", element_justification = 'c').Layout(layout_Main)
+
+# Start with windows as False (or not active) and turn them to True (turn them on) when we open them
 winActive_Programs = False
 winActive_Files = False
 winActive_Labels = False
@@ -52,14 +55,23 @@ winActive_MBExtract = False
 winActive_MBUltimate = False
 winActive_AddTract = False
 threadMessage = "Program Started"
+
+# Begin the main window. The way GUI's work, the application runs on while loops. For example:
+#       while the application is activated, run it. Once the loop stops, stop the application.
+# Note: I will comment heavily the first couple windows (and unique statements later on), but you'll get the idea
 while True:
+    # Tells the window to read the ev_Main Event (such as a click), and vals_Main values (user input)
     ev_Main, vals_Main = win_Main.Read()
+    # If the main event is to Exit, close the while loop, thus closing the program
     if ev_Main is None or ev_Main == 'Exit':
         break
     # Programs Window
+    # If the Programs window is not already active and you click (event) Programs....
     if not winActive_Programs and ev_Main == 'Programs':
+        # Open the Programs window and hide the main window
         winActive_Programs = True
         win_Main.Hide()
+        # Like before, configure the layout for this window and activate it (win_Programs)
         layout_Programs = [[sg.Text('Which Program?')],
                            [sg.Text('Map Updates')],
                            [sg.Button('QGIS Layer Updates')],
@@ -72,7 +84,9 @@ while True:
                            [sg.Text('iLandman')],
                            [sg.Button('Add Tract')]]
         win_Programs = sg.Window('Programs', element_justification = 'l').Layout(layout_Programs)
+
         while True:
+            # while in this program, read the event and values, and if the event is close, exit and unhide the last window.
             ev_Programs, vals_Programs = win_Programs.Read()
             if ev_Programs is None or ev_Programs == 'Exit':
                 winActive_Programs = False
@@ -81,9 +95,11 @@ while True:
                 break
 
             # QGIS Label Updates Window
+            # If Labels window is not active and the event on the programs page is to press 'QGIS Label Updates'...
             if not winActive_Labels and ev_Programs == 'QGIS Label Updates':
                 winActive_Labels = True
                 win_Programs.Hide()
+                # Note: a key (as seen in the layout below in red) allows you to reference this user input in a fxn (see below)
                 layout_Labels = [[sg.Text('Please enter the Working Interest Detail and Ownership Labels')],
                                  [sg.Checkbox("Webscrape these files?", key = '-scrape-')],
                                  [sg.Text("Working Interest Detail: "),sg.FileBrowse('Browse', target = '-wi-'), sg.InputText(key='-wi-', size=(65,1))],
@@ -98,9 +114,15 @@ while True:
                         win_Labels.Close()
                         win_Programs.UnHide()
                         break
+                    # This is where it starts getting different again.. pay attention.
+                    # If the event/click is on Submit:
                     if ev_Labels == 'Submit':
-                        labelupdate = threading.Thread(target = updateLabels, args = (vals_Labels['-scrape-'], vals_Labels['-wi-'], vals_Labels['-or-']), daemon=True)
+                        # Start a thread (almost like a separate program), that takes the fxn updateLabels, with the
+                        # given arguments (using values read pertaining to a specific key), then start it.
+                        labelupdate = threading.Thread(target = updateLabels, args = (vals_Labels['-scrape-'],
+                                                              vals_Labels['-wi-'], vals_Labels['-or-']), daemon=True)
                         labelupdate.start()
+                        # Then update the blank text box in the layout with a message saying it has started.
                         win_Labels.FindElement('-output-').Update(threadMessage)
 
             if not winActive_Layer and ev_Programs == 'QGIS Layer Updates':
@@ -145,10 +167,13 @@ while True:
                         win_Programs.UnHide()
                         break
                     if ev_MB == 'Submit':
+                        # Here, instead of starting a new instance (or thread), I just use the main thread
+                        # because its automatic.. I just run the function as is
                         output = mbDegrees(vals_MB['northing'], vals_MB['degrees'], vals_MB['minutes'], vals_MB['seconds'], vals_MB['easting'], vals_MB['feet'], vals_MB['unit'])
                         win_MB.FindElement('-output-').Update(output)
 
             # QGIS M&B Import/Calculator
+            # Honestly, this was useful before the Ultimate M&B was developed, take it out if you really want to.
             if not winActive_MBImport and ev_Programs == 'QGIS M&B Import/Calculator':
                 winActive_MBImport = True
                 win_Programs.Hide()
@@ -427,11 +452,33 @@ while True:
 
 # EXPORTING TO APPLICATION -
 # cd //WEM-MASTER/Sensitive Data/WEM Uintah/Maps/WEM_Mapping Application
-# cd \\WEM-MASTER\Sensitive Data\WEM Uintah\Maps\WEM_Mapping Application
-# C:\Users\Accounting\Documents\Peter\Application>pyinstaller WEM_Mapping v2.py --windowed --hidden-import time --hidden-import PySimpleGUI --hidden-import os --hidden-import rpy2.robjects --hidden-import datetime --hidden-import shutil --onedir
+# EXAMPLE COMPILING CODE
+# C:\Users\Accounting\Documents\Peter\Application>pyinstaller WEM_Mapping.py --windowed -i WEM_M_Icon.ico
+# --hidden-import time --hidden-import PySimpleGUI --hidden-import os --hidden-import rpy2.robjects
+# --hidden-import datetime --hidden-import shutil
 # First: cd *directory* -- wherever you are putting the application
 # Second: See above. Make sure to include:
-#           --windowed (can't remember what this does)
-#           -i icon.ico (reads an icon file, make sure its in your cd)
+#           --windowed (makes it run as a window rather than in the cmd)
+#           -i iconfile.ico (reads an icon file, make sure its in your cd)
 #           --hidden-import *package name* (imports the packages you used, include all of them)
-#           --onefile (compresses several files into one application)
+#           --onefile (compresses several files into one application) (DONT DO THIS ONE ANYMORE, MAKES STARTUP SLOW)
+
+
+# In order to export the application script as an EXE (application) that you don't have to run thru Pycharm, go the the
+# command line (cmd) and get to the folder with the scripts in it by pressing "cd Documents" and replace Documents with
+# whatever the next folder is that you are going to. Then, with pyinstaller.py in your folder as well as the icon
+# converted to an .ico file, run a command that looks something like that above. You can also look at a Word document
+# with the command in it titled "pyinstaller command" or something like that. Just follow what is above, such as using
+# hidden imports, making sure its windowed, and putting your icon file in there. Its kindof a pain and isn't really
+# necessary as the only purpose is to make it so someone without the Python program can run it, so I don't do it often.
+
+
+# PLEASE DON'T HESITATE TO CONTACT ME.
+# I am still willing to help out with whatever bugs come your way, or whatever ideas you have. I really enjoyed coding
+# this and encourage you to continue developing it and making it better. I would suggest setting up a github repository
+# as I have done on my account and frequently commit and push your changes to the repository. That way, you have a
+# backup of your versions of the code and I can easily access it if you need any help.
+# Email: pvankatwyk@gmail.com
+# Phone: (209) 637-0795
+
+# TODO: Make a list of things that need to be improved
