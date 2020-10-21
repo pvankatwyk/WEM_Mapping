@@ -10,10 +10,14 @@ import re
 from soundfxn import sound
 
 def iLandmanTractMap(Township, Range, Section, TractNumber, County, Corner, Description):
+    # This function will open up iLandman and map the M&B tract. Out of all of the programs, this one probably needs
+    # the most work and requires the most upkeep. The process can be complex and iLandman can work differently in the
+    # future.. so keep an eye on this one.
 
-    # Set up
+    # Set up - put in your username/password and where the chromedriver is.
     user_email = r'pvankatwyk@gmail.com'
     user_password = r'A&8BYpG%&*xy#s!'
+    # Make sure that this is accurate or it won't work. If the chromedriver moves, update this
     path = r'\\WEM-MASTER\Working Projects\WEMU Leasing\Python Codes\Python Code\chromedriver.exe'
     driver = webdriver.Chrome(path)
 
@@ -22,12 +26,17 @@ def iLandmanTractMap(Township, Range, Section, TractNumber, County, Corner, Desc
 
     # Function that finds the element and waits for it to load before continuing
     def findElement(XPATH):
+        # This is waiting up to 10 seconds for the item to appear before interacting. You can change
+        # the 10 second wait as I have in other places, if you know it will take over 10 seconds
         find = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, XPATH)))
         return find
 
     # Log in
+    # This page is unique because it is a 'secure' page, so we use a while loop to enter in the info
     email = findElement(r'//*[@id="auth0-lock-container-1"]/div/div[2]/form/div/div/div[2]/span/div/div/div/div/div/div/div/div/div/div[1]/div/input')
     counter = 0
+    # Basically, try clicking the email box. If it gives the error that it is not interactable, add 0.1 to the counter
+    # and try again. It will stop trying after the counter reaches 10.
     while counter < 10:
         try:
             email.click()
@@ -36,40 +45,48 @@ def iLandmanTractMap(Township, Range, Section, TractNumber, County, Corner, Desc
             counter += 0.1
 
     email.click()
+    # send_keys enters in the information (like pressing keys)
     email.send_keys(user_email)
     password = findElement(r'//*[@id="auth0-lock-container-1"]/div/div[2]/form/div/div/div[2]/span/div/div/div/div/div/div/div/div/div/div[2]/div/div/input')
     password.click()
     password.send_keys(user_password)
+    # Keys.RETURN presses return
     password.send_keys(Keys.RETURN)
 
     # Get to map
     project = findElement(r'//*[@id="projectList"]/table/tbody/tr/td[1]/a')
     project.click()
 
+    # Open up iLandman Project Map
     mapDrop = findElement(r'//*[@id="menu"]/ul/li[7]/span/a')
     mapDrop.click()
     projmap = findElement(r'//*[@id="menu"]/ul/li[7]/div[1]/div/a[1]')
     projmap.click()
+    # Switches main window (tab) because a new tab opens when the map is opened
     driver.switch_to.window(driver.window_handles[1])
+    # closes the intro screen.. this has had problems. Update if needed
     closeIntro = findElement(r'/html/body/div[7]/div[1]/button/span[1]')
     time.sleep(2)
     closeIntro.click()
 
+    # Left clicks
     actionChains = ActionChains(driver)
     fullmap = findElement(r'//*[@id="container"]')
     actionChains.context_click(fullmap).perform()
 
     editor = findElement(r'//*[@id="piemenuCanvas"]')
     action = webdriver.common.action_chains.ActionChains(driver)
+    # This clicks at a specific place on the page, corresponds to editor
     action.move_to_element_with_offset(editor, 5, 100).perform()
     action.click()
     action.perform()
 
-
+    # see soundfxn.py - beeps when user input is required
     sound('beep')
     dropdownTract = WebDriverWait(driver, 3600).until(EC.presence_of_element_located((By.XPATH, r'//*[@id="layerEditorSelectLayer"]/i')))
     dropdownTract.click()
 
+    # MB Button
     tractMB = findElement(r'//*[@id="ui-id-6"]')
     tractMB.click()
 
@@ -77,6 +94,7 @@ def iLandmanTractMap(Township, Range, Section, TractNumber, County, Corner, Desc
     MBdraw = findElement(r'//*[@id="layerEditorMetesBounds"]/i')
     MBdraw.click()
 
+    # Enters in all of the information for the location of the tract
     state = findElement(r'//*[@id="metesBoundsStates"]')
     state.click()
     state.send_keys('u')
@@ -103,6 +121,8 @@ def iLandmanTractMap(Township, Range, Section, TractNumber, County, Corner, Desc
     time.sleep(0.75)
     rng.send_keys(Range)
 
+    # I have had problems with section 22. For some reason, iLandan will register when you enter "22" as "21" which
+    # is dumb. I have not tried to fix it, as it will probably be more work than its worth. Just a heads up.
     sec = findElement(r'//*[@id="metesBoundsBoundaryTierCountainer"]/span[3]/select')
     sec.click()
     time.sleep(0.75)
@@ -114,20 +134,28 @@ def iLandmanTractMap(Township, Range, Section, TractNumber, County, Corner, Desc
     crn.send_keys(Corner)
     crn.send_keys(Keys.RETURN)
 
+    # This waits for you to enter in the starting location. I never really figured out an efficient way to automate this
+    # so I just always chose it myself.
     sound('beep')
     firstcoord = WebDriverWait(driver, 1000).until(EC.presence_of_element_located((By.XPATH, r'//*[@id="metesBoundsCoordinatesContainer"]/div')))
     firstcoord.click()
 
-    # Get actions
+    # This portion of the code takes a raw description and extracts the actions. This can get complicated so I'll try
+    # to comment pretty heavily. Familiarize yourself with Regular Expressions, or REGEX (regex101.com)
+    # establish the patter. Look up what each part means
     pattern = re.compile(
         r'.hence.(North|South|East|West|N|S|E|W|north|south|east|west).\d{1,4}.{0,2}\d{0,2}.{0,2}\d{0,2}.{0,3}(North|South|East|West|N|S|E|W|north|south|east|west){0,5}.{0,1}\d{0,4}.{0,1}\d{0,2}.(feet|rods|chains|Feet|ft|Rods)')
-    matches = pattern.finditer(Description) # TODO: Is this reading the degrees minutes AND seconds? -- I THINK SO.... TEST
+    # Finds the matches to the pattern above
+    matches = pattern.finditer(Description)
     matches1 = ''
     matchlist = []
+    # For every match that you find in the description, append or add it to the list "matchlist"
     for match in matches:
         matches1 += '\n' + match.group()
         matchlist.append(match.group())
 
+    # This chunk of code separates each action into their parts (degrees, minutes, seconds, direction, distance, etc).
+    # Once again, splits on a pattern based on regular expressions.
     match_split = []
     for item in matchlist:
         # match_split.append((re.split(r"[\s°º’′'\"][\s]{0,1}", item))) # THIS INCLUDES " - don't know how to get it to add space after
