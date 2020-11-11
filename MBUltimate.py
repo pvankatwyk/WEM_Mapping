@@ -1,4 +1,6 @@
 def MBUltimate(MBstring):
+    import re
+    import pandas as pd
     # FXN: Takes a legal description string, separates it into actionable steps, and exports the results into CSV to be uploaded into QGIS
     # INPUT: Legal Description (string)
 

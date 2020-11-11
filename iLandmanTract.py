@@ -159,7 +159,6 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
     if MB == False:
         editLoc = findElement(r'//*[@id="Description"]/input[2]')
         editLoc.click()
-
         # Recognizes each item needed for tractulator input
         # For more information on what the Regular Expression code means and to practice, go to "Regex101.com"
         #regex for description elements
@@ -168,8 +167,12 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
         matchlist = []
         for match in matches:
             matchlist.append(match.group())
-
-        DesEl1 = matchlist[0]
+        try:
+            DesEl1 = matchlist[0]
+        except IndexError:
+            all = findElement(r'//*[@id="tractCalculatorContainer"]/div/table/tbody/tr[2]/td[2]/div')
+            all.click()
+            pass
         try:
             DesEl2 = matchlist[1]
         except IndexError:
@@ -200,21 +203,26 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
         andbutton = findElement(r'//*[@id="tractCalculatorContainer"]/div/table/tbody/tr[3]/td[3]/div')
 
         # Press tractulator buttons based on the list above (when you see North, click North)
-        for i in range(len(DesEl1)):
-            if DesEl1[i] == 'N':
-                north.click()
-            elif DesEl1[i] == 'S':
-                south.click()
-            elif DesEl1[i] == 'E':
-                east.click()
-            elif DesEl1[i] == 'W':
-                west.click()
-            elif DesEl1[i] == '/':
-                continue
-            elif DesEl1[i] == '2':
-                half.click()
-            elif DesEl1[i] == '4':
-                quarter.click()
+        try:
+            for i in range(len(DesEl1)):
+                if DesEl1[i] == 'All':
+                    all.click()
+                if DesEl1[i] == 'N':
+                    north.click()
+                elif DesEl1[i] == 'S':
+                    south.click()
+                elif DesEl1[i] == 'E':
+                    east.click()
+                elif DesEl1[i] == 'W':
+                    west.click()
+                elif DesEl1[i] == '/':
+                    continue
+                elif DesEl1[i] == '2':
+                    half.click()
+                elif DesEl1[i] == '4':
+                    quarter.click()
+        except UnboundLocalError:
+            pass
         try:
             if DesEl2 != '':
                 andbutton.click()
@@ -233,7 +241,7 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
                         half.click()
                     elif DesEl2[i] == '4':
                         quarter.click()
-        except IndexError:
+        except (IndexError, UnboundLocalError):
             pass
 
         try:
@@ -254,7 +262,7 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
                         half.click()
                     elif DesEl3[i] == '4':
                         quarter.click()
-        except IndexError:
+        except (IndexError, UnboundLocalError):
             pass
 
         try:
@@ -275,7 +283,7 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
                         half.click()
                     elif DesEl4[i] == '4':
                         quarter.click()
-        except IndexError:
+        except (IndexError, UnboundLocalError):
             pass
 
         try:
@@ -296,7 +304,7 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
                         half.click()
                     elif DesEl5[i] == '4':
                         quarter.click()
-        except IndexError:
+        except (IndexError, UnboundLocalError):
             pass
         try:
             if DesEl6 != '':
@@ -316,7 +324,7 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
                         half.click()
                     elif DesEl6[i] == '4':
                         quarter.click()
-        except IndexError:
+        except (IndexError, UnboundLocalError):
             pass
 
         time.sleep(2)
@@ -336,7 +344,7 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
     if MB == False and Map == True:
         addTractMap = findElement(r'//*[@id="location-addtract"]')
         addTractMap.click()
-        add = add = findElement(r'/html/body/div[72]/div[3]/div/button[1]/span')
+        add = findElement(r'/html/body/div[contains(.,"Add U-")]/div[3]/div/button[1]/span')
         add.click()
 
     time.sleep(5)
@@ -348,6 +356,6 @@ def iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Des
 
 
 
-#iLandmanTract('3S', '4W', '17', '1', 'Duchesne', '240', 'Section 1: NE/4, N/2SE/4', False, False)
+#iLandmanTract('4S', '6W', '2', '10', 'Duchesne', '640', 'Section 2: All', False, True)
 #iLandmanTract('2S', '2W', '31', '10', 'Duchesne', '152.74', 'Section 31: W/2NW/4, E/2NW/4', False, True)
 #iLandmanTract(Township, Range, Section, TractNumber, County, GrossAcres, Description, MB, Map)
