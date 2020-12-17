@@ -94,7 +94,7 @@ def updateLabels(webscrape, workingInterestFile, ownershipFile):
         ok.click()
         viewreport = findElement(r'//*[@id="save-form"]')
         viewreport.click()
-        time.sleep(15)
+        time.sleep(25)
         cls = findElement(r'/html/body/div[contains(.,"Generating")]/div[3]/div/button')
         cls.click()
 
@@ -160,7 +160,7 @@ def updateLabels(webscrape, workingInterestFile, ownershipFile):
         viewrep.click()
         # TODO: This line doesn't work very well, the old XPath was [@id="ui-id-46"] and now its //*[@id="ui-id-50"]/p/p/a
         downloadclick = WebDriverWait(driver, 10000).until(EC.presence_of_element_located((By.XPATH, r'//*[@id="ui-id-50"]/p/p/a')))
-        time.sleep(10)
+        time.sleep(20)
 
         # Rename last download to leasehold
         todayDate = datetime.date(datetime.now())
