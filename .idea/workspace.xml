@@ -10,9 +10,10 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9df970ed-76bd-43bd-b8fe-c4b44731a867" name="Default Changelist" comment="11/11 XPath fixes">
+    <list default="true" id="9df970ed-76bd-43bd-b8fe-c4b44731a867" name="Default Changelist" comment="12/17 - fixed XPaths">
+      <change afterPath="$PROJECT_DIR$/productionUpdate.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/updateLabels.py" beforeDir="false" afterPath="$PROJECT_DIR$/updateLabels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WEM_Mapping.py" beforeDir="false" afterPath="$PROJECT_DIR$/WEM_Mapping.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +42,7 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Language Defaults" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.WEM_Mapping">
     <configuration name="WEM_Mapping" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -107,11 +108,33 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="scratch_1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="WEM_Mapping" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.scratch" />
-        <item itemvalue="Python.iLandmanTract" />
         <item itemvalue="Python.WEM_Mapping" />
+        <item itemvalue="Python.scratch" />
+        <item itemvalue="Python.scratch_1" />
+        <item itemvalue="Python.iLandmanTract" />
       </list>
     </recent_temporary>
   </component>
@@ -145,7 +168,14 @@
       <option name="project" value="LOCAL" />
       <updated>1605119502404</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="12/17 - fixed XPaths">
+      <created>1608229844841</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1608229844841</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -164,7 +194,8 @@
     <MESSAGE value="WEM_Mapping v2 8/26" />
     <MESSAGE value="9/14 Bug Fixes" />
     <MESSAGE value="11/11 XPath fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="11/11 XPath fixes" />
+    <MESSAGE value="12/17 - fixed XPaths" />
+    <option name="LAST_COMMIT_MESSAGE" value="12/17 - fixed XPaths" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

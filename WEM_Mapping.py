@@ -24,6 +24,7 @@ from mbDegreesImport import mbDegreesImport
 from mbDegrees import mbDegrees
 from iLandmanTract import iLandmanTract
 from iLandmanMapTract import iLandmanTractMap
+from productionUpdate import productionUpdate
 from soundfxn import sound
 os.environ['PYTHONHOME'] = r'C:\Users\Accounting\Anaconda3'
 os.environ['PYTHONPATH'] = r'C:\Users\Accounting\Anaconda3\lib\site-packages'
@@ -54,6 +55,7 @@ winActive_MBImport = False
 winActive_MBExtract = False
 winActive_MBUltimate = False
 winActive_AddTract = False
+winActive_Prod = False
 threadMessage = "Program Started"
 
 # Begin the main window. The way GUI's work, the application runs on while loops. For example:
@@ -82,7 +84,9 @@ while True:
                            [sg.Button('QGIS M&B Import/Calculator')],
                            [sg.Button('The Ultimate M&B Program')],
                            [sg.Text('iLandman')],
-                           [sg.Button('Add Tract')]]
+                           [sg.Button('Add Tract')],
+                           [sg.Text('Production')],
+                           [sg.Button('Update Production Spreadsheet')]]
         win_Programs = sg.Window('Programs', element_justification = 'l').Layout(layout_Programs)
 
         while True:
@@ -407,6 +411,26 @@ while True:
                             mapMB.start()
                             win_AddTract.FindElement('-output-').Update(threadMessage)
 
+            if not winActive_Prod and ev_Programs == 'Update Production Spreadsheet':
+                winActive_Prod = True
+                win_Programs.Hide()
+                layout_Prod = [[sg.Text('Press \'Run\' button to output production csv in the \n'
+                                        'Downloads folder. Use the output csv to update the\n'
+                                        'production spreadsheet in WEM Financial.')],
+                             [sg.Text('', key='-output-', size=(50, 1))],
+                             [sg.Submit('Run')]]
+                win_Prod = sg.Window('Update Production Spreadsheet').Layout(layout_Prod)
+                while True:
+                    ev_Prod, vals_Prod = win_Prod.Read()
+                    if ev_Prod is None or ev_Programs == 'Exit':
+                        winActive_Prod = False
+                        win_Prod.Close()
+                        win_Programs.UnHide()
+                        break
+                    if ev_Prod == 'Run':
+                        output = productionUpdate()
+                        win_Prod.FindElement('-output-').Update(output)
+
     # Files Window
     if not winActive_Files and ev_Main == 'Files':
         winActive_Files = True
@@ -481,4 +505,4 @@ while True:
 # Email: pvankatwyk@gmail.com
 # Phone: (209) 637-0795
 
-# TODO: Make a list of things that need to be improved
+# TODO: Make a list of things that need to be improved (Make a TODO list)
